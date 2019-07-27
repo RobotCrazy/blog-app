@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="../public/client/testScript.js"></script>
+    <script>
+        function aler(data) {
+            alert(data);
+        }
+    </script>
+    <title>Blog</title>
+</head>
+
+<body>
+    <div>
+        This is a really cool blog!
+        <% let i = 0;
+        while( i < data.length) { %>
+            <p class="<%- data[0].name %>">
+                <%= data[i].desc %>
+            </p>
+            <% i++;
+          } %>
+    </div>
+    <script>
+        window.alert("<%-data[0].desc%>");
+    </script>
+</body>
+
+</html>
