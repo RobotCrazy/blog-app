@@ -7,3 +7,7 @@ function buildPosts(postList) {
     }
     return posts;
 }
+
+function print(data) {
+    console.log(data);
+}

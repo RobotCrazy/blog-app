@@ -4,8 +4,7 @@
 }
 
 body {
-    margin-top: 0px;
-    padding: 50px;
+    margin: 0px;
     padding-top: 0px;
     background-color: #f2f2f2;
 }
@@ -15,14 +14,17 @@ h1 {
 }
 
 .pageHeader {
+    padding: 20px;
     background-color: black;
     color: white;
 }
 
 .blog {
     margin: auto;
+    margin-top: 8px;
     padding: 30px;
     border-radius: 20px;
     background-color: gray;
     min-width: 40vw;
+    max-width: 60vw;
 }
