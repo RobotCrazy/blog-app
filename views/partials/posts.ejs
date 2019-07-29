@@ -1,0 +1,11 @@
+<% for(let i = 0; i < data.length; i++) { %>
+    <div class="blog">
+        <header>
+            <%= data[i].sender%>
+        </header>
+        <br />
+        <p>
+            <%= data[i].content %>
+        </p>
+    </div>
+    <% } %>
