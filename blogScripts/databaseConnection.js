@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const dbPath = 'mongodb://localhost:27017/test';
+const dbPath = 'mongodb://localhost:27017';
 module.exports = {
     connectToDB: function() {
         return MongoClient.connect(dbPath).then((db) => {
@@ -16,5 +16,15 @@ module.exports = {
     },
     parseDBResult: function(dbObject) {
         return JSON.parse(JSON.stringify(dbObject));
+    },
+    writeToDB: function(data) {
+        MongoClient.connect(dbPath).then((db) => {
+            let database = db.db("test");
+            database.collection("posts").insertOne(data, (err, res) => {
+                if (err) throw err;
+                console.log("Inserted");
+                db.close();
+            })
+        });
     }
 };

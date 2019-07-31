@@ -16,32 +16,14 @@
     <header class="pageHeader">
         <h1>Welcome to Blogger!</h1>
     </header>
-    <!--<div>
-        This is a really cool blog!
-        <% let i = 0;
-        while( i < data.length) { %>
-            <p class="<%- data[0].name %>">
-                <%= data[i].desc %>
-            </p>
-            <% i++;
-          } %>
-    </div>-->
+
     <div id="posts">
         <%include partials/posts.ejs%>
-
-            <!--<header>Upneet Singh</header>
-        <br />
-        <p>This is a post by Upneet Singh containing all sorts of amazing content. We love using all these cool things to make a random post to test the appearance of things.
-        </p>-->
     </div>
-    <!-- <script>
-        //let postsList = JSON.stringify(<% - data %>);
-        let post1 = new Post("<%-data[0].sender%>", "<%-data[0].content%>", "<%-data[0].time%>");
-        document.body.innerHTML += (post1.buildHTML());
-        console.log(post1.buildHTML());
-        /*document.getElementById("blog").innerHTML += */
-        //console.log(buildPosts("<%- data %>"));
-    </script> -->
+    <form name="makeAPost" id="makeAPost" action="/" method="POST" class="postForm">
+        <textarea name="postData" rows="5" colors="50" class="postFormInput" /></textarea>
+        <input type="submit" name="submit" value="Submit" />
+    </form>
 </body>
 
 </html>
