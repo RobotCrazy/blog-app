@@ -10,6 +10,7 @@ const multer = require('multer');
 var upload = multer({ dest: './uploads' });
 const flash = require('connect-flash');
 const User = require('./models/user');
+const bcrypt = require('bcryptjs');
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -133,7 +134,52 @@ app.post('/users/register', upload.single('profileImage'), [
             res.location('/users/members');
             res.redirect('/users/members');
         }
+    }
+);
+
+app.post('/users/login',
+    passport.authenticate('local', {
+        failureRedirect: '/users/login',
+        failureFlash: 'Invalid username or password'
+    }),
+    function(req, res) {
+        // If this function gets called, authentication was successful.
+        // `req.user` contains the authenticated user.
+        req.flash('success', 'You are now logged in');
+        res.redirect('/users/members');
+    }
+);
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.getUserById(id, function(err, user) {
+        done(err, user);
     });
+});
+
+passport.use(new LocalStrategy(function(username, password, done) {
+    User.getUserByUsername(username, function(err, user) {
+        if (err) {
+            throw err;
+        }
+        if (!user) {
+            return done(null, false, { message: 'Unknown user' });
+        }
+        User.comparePassword(password, user.password, function(err, isMatch) {
+            if (err) {
+                return done(err);
+            }
+            if (isMatch) {
+                return done(null, user);
+            } else {
+                return done(null, false, { message: 'Invalid password' });
+            }
+        });
+    });
+}));
 
 app.listen(3000, function() {
     console.log('Blog listening on port 3000!');

@@ -10,11 +10,12 @@
 
 <body>
     <h1>Register Here</h1>
-    <form name="register" action="/users/register" enctype="multipart/form-data" method="POST">
-        <input type="text" name="username" placeholder="Username" />
-        <input type="password" name="password" placeholder="Password" />
-        <input type="submit" name="submit" value="Login" />
-    </form>
+    <%- messages(); %>
+        <form name="register" action="/users/login" enctype="multipart/form-data" method="POST">
+            <input type="text" name="username" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />
+            <input type="submit" name="submit" value="Login" />
+        </form>
 </body>
 
 </html>
