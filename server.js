@@ -12,6 +12,8 @@ const flash = require('connect-flash');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs');
 
+require('./config/passport')(passport);
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -20,6 +22,10 @@ app.use(session({
     saveUninitialized: true,
     resave: true
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(expressValidator({
@@ -83,6 +89,58 @@ app.post('/', function(req, res) {
     });
 });
 
+// passport.use(new LocalStrategy({ usernameField: 'username' },
+//     function(username, password, done) {
+//         User.findOne({
+//                 username: username
+//             }),
+//             function(err, user) {
+//                 if (err) {
+//                     return done(err);
+//                 }
+//                 if (!user) {
+//                     return done(null, false, { message: 'User not found' });
+//                 }
+//                 if (!user.validPassword(password)) {
+//                     return done(null, false, {
+//                         message: 'Password is wrong'
+//                     });
+//                 }
+//                 return done(null, user);
+//             }
+//             // console.log("This is running");
+//             // User.getUserByUsername(username, function(err, user) {
+//             //     if (err) {
+//             //         throw err;
+//             //     }
+//             //     if (!user) {
+//             //         return done(null, false, { message: 'Incorrect username.' });
+//             //     }
+//             //     User.comparePassword(password, user.password, function(err, isMatch) {
+//             //         if (err) {
+//             //             return done(err);
+//             //         }
+//             //         if (isMatch) {
+//             //             return done(null, user);
+//             //         } else {
+//             //             return done(null, false, { message: 'Invalid password' });
+//             //         }
+//             //     });
+//             // });
+//     }
+// ));
+
+app.post('/users/login', (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/users/members',
+        failureRedirect: '/users/login',
+        failureFlash: true
+    })(req, res, next);
+});
+
+
+
+
 app.post('/users/register', upload.single('profileImage'), [
         check("name", "Name is required").not().isEmpty(),
         check("email", "Email is required").not().isEmpty(),
@@ -131,55 +189,11 @@ app.post('/users/register', upload.single('profileImage'), [
             });
 
             req.flash('success', "You are now registered and can login");
-            res.location('/users/members');
-            res.redirect('/users/members');
+            res.location('/users/login');
+            res.redirect('/users/login');
         }
     }
 );
-
-app.post('/users/login',
-    passport.authenticate('local', {
-        failureRedirect: '/users/login',
-        failureFlash: 'Invalid username or password'
-    }),
-    function(req, res) {
-        // If this function gets called, authentication was successful.
-        // `req.user` contains the authenticated user.
-        req.flash('success', 'You are now logged in');
-        res.redirect('/users/members');
-    }
-);
-
-passport.serializeUser(function(user, done) {
-    done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-    User.getUserById(id, function(err, user) {
-        done(err, user);
-    });
-});
-
-passport.use(new LocalStrategy(function(username, password, done) {
-    User.getUserByUsername(username, function(err, user) {
-        if (err) {
-            throw err;
-        }
-        if (!user) {
-            return done(null, false, { message: 'Unknown user' });
-        }
-        User.comparePassword(password, user.password, function(err, isMatch) {
-            if (err) {
-                return done(err);
-            }
-            if (isMatch) {
-                return done(null, user);
-            } else {
-                return done(null, false, { message: 'Invalid password' });
-            }
-        });
-    });
-}));
 
 app.listen(3000, function() {
     console.log('Blog listening on port 3000!');

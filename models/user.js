@@ -30,16 +30,21 @@ let UserSchema = mongoose.Schema({
 var User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.getUserById = function(id, callback) {
+    console.log("Getting user id");
     User.findById(id, callback);
 };
 
-module.exports.getUserByUsername = function(username, callback) {
-    let query = { username: username };
+module.exports.getUserByUsername = function(username1, callback) {
+    console.log("Getting username");
+    let query = { username: username1 };
     User.findOne(query, callback);
 };
 
 module.exports.comparePassword = function(candidatePassword, hash, callback) {
+    console.log("Comparing password");
     bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+        console.log("Is match?");
+        console.log(isMatch);
         callback(null, isMatch);
     });
 };
