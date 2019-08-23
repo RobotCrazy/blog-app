@@ -8,22 +8,22 @@ mongoose.connect(dbPath);
 let db = mongoose.connection;
 
 let UserSchema = mongoose.Schema({
-    username: {
-        type: String,
-        index: true
-    },
     password: {
-        type: String
+        type: String,
+        required: true
     },
     email: {
         type: String,
+        required: true
 
     },
     name: {
-        type: String
+        type: String,
+        required: true
     },
     profileImage: {
-        type: String
+        type: String,
+        required: true
     }
 });
 

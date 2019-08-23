@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const dbConnection = require('./blogScripts/databaseConnection');
-const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
@@ -15,7 +14,7 @@ const bcrypt = require('bcryptjs');
 require('./config/passport')(passport);
 
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.use(session({
     secret: "secret",
@@ -28,23 +27,6 @@ app.use(passport.session());
 
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(expressValidator({
-//     errorFormatter: function(param, msg, value) {
-//         var namespace = param.split('.'),
-//             root = namespace.shift(),
-//             formParam = root;
-
-//         while (namespace.length) {
-//             formParam += '[' + namespace.shift() + ']';
-//         }
-
-//         return {
-//             param: formParam,
-//             msg: msg,
-//             value: value
-//         };
-//     }
-// }));
 app.use(require('connect-flash')());
 app.use(function(req, res, next) {
     res.locals.messages = require('express-messages')(req, res);
@@ -89,47 +71,6 @@ app.post('/', function(req, res) {
     });
 });
 
-// passport.use(new LocalStrategy({ usernameField: 'username' },
-//     function(username, password, done) {
-//         User.findOne({
-//                 username: username
-//             }),
-//             function(err, user) {
-//                 if (err) {
-//                     return done(err);
-//                 }
-//                 if (!user) {
-//                     return done(null, false, { message: 'User not found' });
-//                 }
-//                 if (!user.validPassword(password)) {
-//                     return done(null, false, {
-//                         message: 'Password is wrong'
-//                     });
-//                 }
-//                 return done(null, user);
-//             }
-//             // console.log("This is running");
-//             // User.getUserByUsername(username, function(err, user) {
-//             //     if (err) {
-//             //         throw err;
-//             //     }
-//             //     if (!user) {
-//             //         return done(null, false, { message: 'Incorrect username.' });
-//             //     }
-//             //     User.comparePassword(password, user.password, function(err, isMatch) {
-//             //         if (err) {
-//             //             return done(err);
-//             //         }
-//             //         if (isMatch) {
-//             //             return done(null, user);
-//             //         } else {
-//             //             return done(null, false, { message: 'Invalid password' });
-//             //         }
-//             //     });
-//             // });
-//     }
-// ));
-
 app.post('/users/login', (req, res, next) => {
     passport.authenticate('local', {
         successRedirect: '/users/members',
@@ -138,20 +79,15 @@ app.post('/users/login', (req, res, next) => {
     })(req, res, next);
 });
 
-
-
-
 app.post('/users/register', upload.single('profileImage'), [
         check("name", "Name is required").not().isEmpty(),
         check("email", "Email is required").not().isEmpty(),
-        check("username", "Username is required").not().isEmpty(),
         check("password", "Password must be a password").not().isEmpty(),
         check("password2", "Passwords must match").equals("password")
     ],
     function(req, res) {
         let name = req.body.name;
         let email = req.body.email;
-        let username = req.body.username;
         let password = req.body.password;
         let password2 = req.body.password2;
         let profileImage;
@@ -174,12 +110,12 @@ app.post('/users/register', upload.single('profileImage'), [
             });
         } else {
             console.log("no errors");
+
             let newUser = new User({
-                name: name,
-                email: email,
-                username: username,
-                password: password,
-                profileImage: profileImage
+                name,
+                email,
+                password,
+                profileImage
             });
             User.createUser(newUser, function(err, user) {
                 if (err) {
